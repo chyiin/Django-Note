@@ -1,6 +1,10 @@
 # Django MVT
 
-參考內容來自：https://ithelp.ithome.com.tw/users/20129810/ironman/3317 （django 學習筆記）
+參考內容來自：
+
+https://ithelp.ithome.com.tw/users/20129810/ironman/3317 （django 學習筆記）
+https://ithelp.ithome.com.tw/articles/10212502 (資料庫與模型進階技巧)
+https://www.learncodewithmike.com/2020/04/django-custom-form-field-validation.html （Django ModelForm客製化表單欄位驗證的技巧）
 
 Django 採用了MVT的軟體設計模式，即模型（Model），視圖（View）和模板（Template）
 
@@ -231,3 +235,38 @@ Restaurant.objects.get(name='一號店').delete()
 ```
 
 透過食物關聯到餐廳，並取得餐廳的名子
+
+### Django (Form)
+
+表單驗證：開發網站表單時，預設會依據資料模型(Model)中，所定義的欄位類型及參數設定，執行基本的檢核，但是實務上，有一些欄位可能需要特殊的檢核邏輯，需要客製化自己的表單驗證機制。
+
+在models.py檔案中，新增一個資料模型類別
+```
+from django.db import models
+class Customer(models.Model):
+    name = models.CharField(max_length=30, blank=False, null=False)
+    email = models.EmailField(blank=False, null=False)
+    tel = models.IntegerField()
+```
+
+同步至資料庫中
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+
+將Django資料模型加入至Django Administration(管理員後台)，在 admin.py 新增：
+```
+from django.contrib import admin
+from .models import Customer
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'email', 'tel')  # 顯示欄位
+admin.site.register(Customer, CustomerAdmin)  # 加入至Administration(管理員後台)
+```
+
+執行 & 檢視資料的新增狀況：
+```
+python3 manage.py runserver
+```
+
+![](https://i.imgur.com/69lKMKj.png)
